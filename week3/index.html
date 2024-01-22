@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Making the grade</title>
+</head>
+<body>
+    <script>
+    // Provided grade data
+        let grades = "jim|25, sue|32, mary|34, ann|22, ted|28, frank|15, lisa|19, mike|30, ahn|26, vishaya|27";
+
+    // Splits the grades into an array
+        studentsArray = grades.split(', ');
+
+    // Takes student data and displays name and score in the format requested
+        for (let i = 0; i < studentsArray.length; i++) {
+            let [name, score] = studentsArray[i].split('|');
+            name = name.charAt(0).toUpperCase() + name.slice(1);
+        }
+
+    // Sets variables for lowest, highest, and total scores
+        let lowestScore = Infinity;
+        let highestScore = -Infinity;
+        let totalScore = 0;
+
+     // Calulcates lowest, highest, and total scores
+        for (let i = 0; i < studentsArray.length; i++) {
+            let [name, score] = studentsArray[i].split('|');
+            let numericScore = parseInt(score);
+            lowestScore = Math.min(lowestScore, numericScore);
+            highestScore = Math.max(highestScore, numericScore);
+            totalScore += numericScore;
+        }
+
+    // Caluclates average score
+        let averageScore = totalScore / studentsArray.length;
+
+    // Sort student names alphabetically 
+        studentsArray.sort((a, b) => {
+            let [nameA] = a.split('|');
+            let [nameB] = b.split('|');
+            return nameA.localeCompare(nameB);
+        });
+
+    // Display data on webpage
+        document.write(`<h1>Student Data</h1>`);
+            for (let i = 0; i < studentsArray.length; i++) {
+                let [name, score] = studentsArray[i].split('|');
+                document.write(`<p>${name} - ${score}</p>`);
+            }
+        document.write(`<h3>Total # of students: ${studentsArray.length}</h3>`);
+        document.write(`<h3>Lowest Score: ${lowestScore}</h3>`);
+        document.write(`<h3>Highest Score: ${highestScore}</h3>`);
+        document.write(`<h3>Average Score: ${averageScore}</h3>`);
+    </script>
+</body>
+</html>
