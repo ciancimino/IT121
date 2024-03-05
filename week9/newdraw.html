@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw a photo</title>
+</head>
+<body>
+    
+    <canvas id="smile" width="600" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('smile');
+        const ctx = canvas.getContext('2d');
+
+        let noseX = 300; // Initial x-coordinate of the nose
+        let noseY = 330; // Initial y-coordinate of the nose
+        let speedX = 1; // Speed of horizontal movement
+        let speedY = -1; // Speed of vertical movement
+
+        function drawCircle(x, y, radius, fillColor, strokeColor) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+            ctx.closePath();
+            if (fillColor) {
+                ctx.fillStyle = fillColor;
+                ctx.fill();
+            }
+            if (strokeColor) {
+                ctx.strokeStyle = strokeColor;
+                ctx.stroke();
+            }
+        }
+
+        function drawSmile() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw face
+            drawCircle(300, 300, 250, 'pink');
+
+            // Draw left eye
+            drawCircle(200, 200, 40, 'black');
+            // Draw right eye
+            drawCircle(400, 200, 40, 'black');
+
+            // Draw left eyebrow (rectangle)
+            ctx.save(); 
+            ctx.translate(160, 150); 
+            ctx.rotate(-Math.PI / 12); 
+            ctx.fillRect(0, 0, 80, 20); 
+            ctx.restore(); 
+            // Draw right eyebrow (rectangle)
+            ctx.save(); 
+            ctx.translate(360, 150); 
+            ctx.rotate(Math.PI / 12); 
+            ctx.fillRect(0, -20, 80, 20); 
+            ctx.restore(); 
+
+            // Draw nose
+            drawCircle(noseX, noseY, 8, 'black');
+            drawCircle(noseX + 20, noseY, 8, 'black'); 
+
+            // Draw mouth
+            ctx.beginPath();
+            ctx.moveTo(200, 400);
+            ctx.quadraticCurveTo(300, 500, 400, 400);
+            ctx.lineWidth = 75;
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+
+            // Draw buck teeth
+            ctx.beginPath();
+            ctx.moveTo(290, 410);
+            ctx.lineTo(290, 450);
+            ctx.moveTo(310, 410);
+            ctx.lineTo(310, 450);
+            ctx.lineWidth = 15;
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            // Update the nose position
+            noseX += speedX;
+            noseY += speedY;
+
+            // Bounce the nose off the edges of the canvas
+            if (noseX + 8 > canvas.width || noseX - 8 < 0) {
+                speedX = -speedX;
+            }
+            if (noseY + 8 > canvas.height || noseY - 8 < 0) {
+                speedY = -speedY;
+            }
+        }
+
+        // Call drawSmiley to draw static smiley face
+        setInterval(drawSmile, 100);
+
+    </script>       
+</body>
+</html>
