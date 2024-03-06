@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <script
+                src="https://code.jquery.com/jquery-3.7.1.min.js"
+                integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+                crossorigin="anonymous"></script>
+    </head>
+    <style>
+        .over {
+            background-color: yellow;
+        }
+        .selected {
+            background-color: green;
+        }
+    </style>
+
+    <body>
+        <div id="buttons"></div>
+        <table border='1' id="characterTable">
+            <tr>
+                <th>name</th>
+                <th>role</th>
+                <th>house</th>
+                <th>gender</th>
+                <th>alignment</th>
+            </tr>
+        </table>
+        <button id="resetButton">reset</button>
+    </body>
+        
+        <script>
+        // list of characters
+        let characters = [
+        {name:"Albus Dumbledore", role:"staff", house:"Gryffindor",gender:"m",alignment:"good"},    
+        {name:"Nymphadora Tonks", role:"", house:"Hufflepuff",gender:"f",alignment:"good"},    
+        {name:"Ron Weasley", role:"student", house:"Gryffindor",gender:"m",alignment:"good"},    
+        {name:"Ginny Weasley", role:"student", house:"Gryffindor",gender:"f",alignment:"good"},    
+        {name:"Hermione Granger", role:"student", house:"Gryffindor",gender:"f",alignment:"good"},    
+        {name:"Mad-eye Moody", role:"staff", house:"",gender:"m",alignment:"good"},    
+        {name:"Prof McGonagall", role:"staff", house:"Gryffindor",gender:"f",alignment:"good"},    
+        {name:"Harry Potter", role:"student", house:"Gryffindor",gender:"m",alignment:"good"},    
+        {name:"Draco Malfoy", role:"student", house:"Slytherin",gender:"m",alignment:"evil"},    
+        {name:"Hagrid", role:"staff", house:"Gryffindor",gender:"m",alignment:"good"},    
+        {name:"Luna Lovegood", role:"student", house:"Ravenclaw",gender:"f",alignment:"good"},    
+        {name:"Voldemort", role:"", house:"Slytherin",gender:"m",alignment:"evil"},    
+        {name:"Bellatrix Lestrange", role:"", house:"Slytherin",gender:"f",alignment:"evil"},           
+        {name:"Severus Snape", role:"staff", house:"Slytherin",gender:"m",alignment:"?"}
+        ];
+
+        $(document).ready(function(){
+
+
+        // add a button for each 'house' value add table row for each character
+        function populateCharacters() {
+                $("#buttons").empty();
+                $("#characterTable tbody").empty();
+
+                let houses = [];
+                characters.forEach(function(char){
+                    if (char.house !== "" && !houses.includes(char.house)) {
+                        houses.push(char.house);
+                        $("#buttons").append(`<button class="houseBtn" data-house="${char.house}">${char.house}</button>`);
+                    }
+
+                    $("#characterTable tbody").append(`<tr class="characterRow" data-house="${char.house}">
+                        <td>${char.name}</td>
+                        <td>${char.role}</td>
+                        <td>${char.house}</td>
+                        <td>${char.gender}</td>
+                        <td>${char.alignment}</td>
+                    </tr>`);
+                });
+
+                updateRowColors();
+            }
+
+        //et visible rows to alternating background color
+
+        function updateRowColors() {
+                $(".characterRow").removeClass("over");
+                $(".characterRow:visible:odd").addClass("over");
+            }
+
+        // add click handler to show only rows matching selected 'house'. Enable buttons to call this handler.
+
+        function deselectAllHouses() {
+                $(".houseBtn").removeClass("selected");
+            }
+
+        populateCharacters();
+
+        $(document).on("click", ".houseBtn", function(){
+                let house = $(this).data("house");
+                $(".characterRow").hide();
+                $(`.characterRow[data-house="${house}"]`).show();
+                deselectAllHouses();
+                $(this).addClass("selected");
+                updateRowColors();
+            });
+
+        // add click handler to reset table
+
+        $("#resetButton").click(function(){
+                $(".characterRow").show();
+                deselectAllHouses();
+                updateRowColors();
+            });
+
+        });
+
+        </script>
+</html>
