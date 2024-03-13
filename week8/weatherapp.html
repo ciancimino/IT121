@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Day Weather Forecast at 1:00 PM</title>
+<style>
+body {
+font-family: Verdana, Geneva, Tahoma, sans-serif;
+margin: 3;
+padding: 50px;
+}
+#cityInput {
+margin-bottom: 20px;
+}
+#weather-info {
+margin-top: 50px;
+}
+</style>
+</head>
+<body>
+
+<h1>5-Day Weather Forecast</h1>
+<label for="cityInput">Enter City Name:</label>
+<input type="text" id="cityInput">
+<button onclick="updateWeather()">Get Forecast</button>
+<button onclick="resetCityInput()">Reset</button>
+<div id="weather-info"></div>
+
+<script>
+
+const kelvinToF = (value) => {
+let fahrenheit = (((Number(value) - 273.15)*9)/5) + 32;
+return fahrenheit.toFixed(2);
+}
+
+// fetch weather data from API 
+async function fetchWeatherData(cityName, apiKey) {
+const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}`;
+
+try {
+const response = await fetch(apiUrl);
+if (!response.ok) {
+throw new Error('Failed to fetch weather data');
+}
+const jsonData = await response.json();
+      
+// Filter forecasts 
+const forecasts = jsonData.list.filter(forecast => forecast.dt_txt.includes(' 21:00:00'));
+
+// Extract forecast data 
+const weatherData = forecasts.map(forecast => {
+let forecast_date = new Date(forecast.dt * 1000);
+let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+let dayOfWeek = days[forecast_date.getDay()]; // Get day of the week
+return {
+date: `${dayOfWeek}, ${forecast_date.toLocaleDateString()}`, // Format date including day of the week
+maxTemp: kelvinToF(forecast.main.temp_max),
+minTemp: kelvinToF(forecast.main.temp_min),
+humidity: forecast.main.humidity,
+description: forecast.weather[0].description,
+icon: forecast.weather[0].icon
+};
+});
+
+return weatherData;
+} catch (error) {
+console.error('Error fetching weather data:', error.message);
+return null;
+}
+}
+
+// display weather 
+function displayWeatherInfo(weatherData) {
+const weatherInfoDiv = document.getElementById('weather-info');
+weatherInfoDiv.innerHTML = ''; 
+    
+weatherData.forEach((forecast, index) => {
+const forecastDiv = document.createElement('div');
+const iconUrl = `http://openweathermap.org/img/wn/${forecast.icon}@2x.png`;
+forecastDiv.innerHTML = `
+<h3>${forecast.date}</h3>
+<p>Max Temperature: ${forecast.maxTemp} degrees</p>
+<p>Min Temperature: ${forecast.minTemp} degrees</p>
+<p>Humidity: ${forecast.humidity}%</p>
+<p>Description: ${forecast.description}</p>
+<img src="${iconUrl}" alt="Weather Icon">
+`;
+weatherInfoDiv.appendChild(forecastDiv);
+});
+}
+
+// reset
+function resetCityInput() {
+document.getElementById('cityInput').value = '';
+}
+
+// update weather information when city is changed
+async function updateWeather() {
+const cityName = document.getElementById('cityInput').value;
+if (!cityName) {
+alert('Please enter a city name.');
+return;
+}
+const apiKey = '9ccbf88f57f127a8f44c54cfe7cb72f3'; 
+const weatherData = await fetchWeatherData(cityName, apiKey);
+if (weatherData) {
+displayWeatherInfo(weatherData);
+}
+}
+
+// Initial weather update
+updateWeather();
+</script>
+
+</body>
+</html>
